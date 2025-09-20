@@ -1,6 +1,34 @@
 #!/bin/bash
 echo "🚀 Starting Arch final installation"
 
+sudo pacman -S --needed git base-devel --noconfirm
+git clone https://aur.archlinux.org/yay.git /tmp/yay
+cd /tmp/yay
+makepkg -si
+cd ~
+rm -rf /tmp/yay
+
+
+# Ask user if he needs to fix grub not showing up or not finding windows dual boot 
+read -p "Did you need to fix dual boot not finding windows arch? (y/N): " fix_grub
+fix_grub=${fix_grub,,}  # to lowercase
+if [[ "$fix_grub" == "y" || "$fix_grub" == "yes" ]]; then
+    sudo pacman -S grub efibootmgr os-prober --noconfirm
+    sudo grub-install --target=x86_64-efi --efi-directory=/boot --recheck
+    # Activer os-prober dans GRUB
+    if grep -q "^#GRUB_DISABLE_OS_PROBER=false" /etc/default/grub; then
+        sudo sed -i 's/^#GRUB_DISABLE_OS_PROBER=false/GRUB_DISABLE_OS_PROBER=false/' /etc/default/grub
+    elif ! grep -q "^GRUB_DISABLE_OS_PROBER=false" /etc/default/grub; then
+        echo "GRUB_DISABLE_OS_PROBER=false" | sudo tee -a /etc/default/grub
+    fi
+
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+    sudo os-prober
+
+
+fi
+
 # Ask user if multilib and extra repositories are enabled in /etc/pacman.conf
 read -p "Did you enable [multilib] and [extra] repos in /etc/pacman.conf? (y/N): " enable_extra_repo
 enable_extra_repo=${enable_extra_repo,,}  # to lowercase
@@ -20,12 +48,6 @@ if [[ "$enable_extra_repo" == "n" || "$enable_extra_repo" == "no" ]]; then
     echo "✅ Repositories updated!"
 fi
 
-# Download yay
-cd /home/$USER
-sudo pacman -S --needed git base-devel --noconfirm
-git clone https://aur.archlinux.org/yay.git
-cd yay
-makepkg -si
 
 # Update system and install official packages
 sudo pacman -Syu --noconfirm \
