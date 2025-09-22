@@ -54,13 +54,14 @@ sudo pacman -Syu --noconfirm \
     steam layer-shell-qt5 qt6-wayland docker thunar nemo gedit showtime \
     linux-firmware mesa unzip ffmpeg vulkan-icd-loader vulkan-tools \
     nvidia-utils nvidia-settings qt6-svg qt6-virtualkeyboard qt6-multimedia-ffmpeg \
-    fish --noconfirm
+    fish tumbler ffmpegthumbnailer
+
 
 # Install AUR packages
 yay -Syu --noconfirm \
     ttf-twemoji-color beeper-v4-bin visual-studio-code-bin teams-for-linux deezer \
-    atlauncher-bin noto-fonts noto-fonts-cjk noto-fonts-emoji --noconfirm
-
+    atlauncher-bin noto-fonts noto-fonts-cjk noto-fonts-emoji qimgv-git
+systemctl enable --now tumblerd
 # Configure fontconfig for emojis and flags
 mkdir -p ~/.config/fontconfig/conf.d/
 cat > ~/.config/fontconfig/conf.d/01-emoji.conf <<'EOF'
@@ -124,11 +125,11 @@ read -p "Do you want to install Lutris and all its dependencies? (y/N): " instal
 install_lutris=${install_lutris,,}
 if [[ "$install_lutris" == "y" || "$install_lutris" == "yes" ]]; then
     sudo pacman -S --noconfirm \
-        nvidia nvidia-utils lib32-nvidia-utils vulkan-tools lutris wine wine-gecko \
+        nvidia-utils lib32-nvidia-utils vulkan-tools lutris wine wine-gecko \
         wine-mono winetricks lib32-gnutls lib32-libldap lib32-mpg123 lib32-openal \
         lib32-v4l-utils lib32-libpulse lib32-alsa-plugins lib32-libxcomposite \
         lib32-libxinerama lib32-ncurses lib32-libxml2 lib32-freetype2 lib32-libpng \
-        lib32-sdl2 dxvk-bin
+        lib32-sdl2
     echo "Pls Follow this to install games without any issue: 👉 https://discord.com/channels/512538904872747018/538903130704838656/1386411255262216232"
 fi
 
