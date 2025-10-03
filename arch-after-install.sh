@@ -134,6 +134,12 @@ if [[ "$install_lutris" == "y" || "$install_lutris" == "yes" ]]; then
 fi
 
 # Final instructions
+echo edit bluetooth to use high quality
+CONFIG_bluetooth="/home/$USER/.config/pipewire/media-session.d/with-a2dp-only.conf"
+mkdir -p "$CONFIG_bluetooth"
+echo "bluez5.codecs = [ aac ldac aptx aptx_hd sbc ]" >> "$CONFIG_bluetooth"
+echo "bluez5.roles = [ a2dp_sink ]" >> "$CONFIG_bluetooth"
+
 echo "⚙️  Please add !debug in /etc/makepkg.conf:"
 echo "   OPTIONS=(strip docs !libtool !staticlibs emptydirs zipman purge !debug lto)"
 echo ""
